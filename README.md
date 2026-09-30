@@ -1,4 +1,4 @@
-# Measure IR Carrier frequency with the Irdroid USB Infrared Adapter
+# Measure IR Carrier frequency with the Irdroid USB Infrared Transceiver
 
 ## Usage:
 
