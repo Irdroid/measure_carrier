@@ -8,9 +8,10 @@ The Irdroid USB Infrared Transceiver can measure IR carrier frequency by using t
 - Use the shell script to enumerate the device as a ttyACM0 serial device
     -    The Linux kernel will enumerate the device as /dev/lirc0 due to thre built in support for the adapter. Therefore to get access to the device from userspace, use the script in this repo to enumerate the adapter as a serial device.   
 - Insert the USB Infrared Transceiver (make sure it is enumerated as a serial device e.g /dev/ttyACM*)
-- Start the program ./irdroid_freq
-- Quickly hit a remote button ONCE from a distance of up to 5cm
+- Start the program `./irdroid-freq`
+- For each sample, press a remote button from a distance of up to 5cm (preferably 2cm), then press Enter when prompted
 - The carrier frequency in HZ will be printed out in the console
+- Use `./irdroid-freq -n 10` to capture 10 consecutive samples and print their mean frequency (That way you will estimate the correct carrier frequency)
 
 ### Other Software that can be used to measure and analyze ir carrier frequency:
 
