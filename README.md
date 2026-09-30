@@ -7,6 +7,7 @@ The Irdroid USB Infrared Transceiver can measure IR carrier frequency by using t
 - Compile the program in Linux with make (requires installation of build essentials )
 - Use the shell script to enumerate the device as a ttyACM0 serial device
     -    The Linux kernel will enumerate the device as /dev/lirc0 due to thre built in support for the adapter. Therefore to get access to the device from userspace, use the script in this repo to enumerate the adapter as a serial device.   
+- The adapter communicates at a fixed serial baud rate of 115200, and the program is configured for that speed.
 - Insert the USB Infrared Transceiver (make sure it is enumerated as a serial device e.g /dev/ttyACM*)
 - Start the program `./irdroid-freq`
 - For each sample, press a remote button from a distance of up to 5cm (preferably 2cm), then press Enter when prompted

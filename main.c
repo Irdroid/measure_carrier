@@ -11,23 +11,14 @@
 #include <unistd.h>
 
 #define RESPONSE_TIMEOUT_MS 3000
+#define IRDROID_BAUD 115200
+#define IRDROID_TIMER_EXT_CLK_HZ 12000000.0
 
 static speed_t baud_constant(long baud)
 {
-	switch (baud) {
-	case 1200: return B1200;
-	case 2400: return B2400;
-	case 4800: return B4800;
-	case 9600: return B9600;
-	case 19200: return B19200;
-	case 38400: return B38400;
-	case 57600: return B57600;
-	case 115200: return B115200;
-#ifdef B230400
-	case 230400: return B230400;
-#endif
-	default: return (speed_t)0;
-	}
+	if (baud == IRDROID_BAUD)
+		return B115200;
+	return (speed_t)0;
 }
 
 static int wait_for_fd(int fd, short events)
@@ -92,7 +83,8 @@ static int read_exact(int fd, unsigned char *buffer, size_t length)
 			received += (size_t)result;
 			continue;
 		}
-		if (result < 0 && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK))
+		if (result < 0 &&
+			(errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK))
 			continue;
 		if (result == 0)
 			errno = EIO;
@@ -104,10 +96,9 @@ static int read_exact(int fd, unsigned char *buffer, size_t length)
 
 static void print_usage(const char *program)
 {
-	fprintf(stderr, "Usage: %s [-d /dev/ttyACM0] [-b baud] [-n count]\n", program);
+	fprintf(stderr, "Usage: %s [-d /dev/ttyACM0] [-n count]\n", program);
 	fprintf(stderr, "  -n count  capture count consecutive samples and report their mean\n");
-	fprintf(stderr, "Supported baud rates: 1200, 2400, 4800, 9600, 19200, ");
-	fprintf(stderr, "38400, 57600, 115200, 230400 (when available)\n");
+	fprintf(stderr, "The Irdroid USB infrared transceiver uses a fixed 115200 baud serial connection.\n");
 }
 
 static uint16_t read_u16_be(const unsigned char *bytes)
@@ -118,7 +109,7 @@ static uint16_t read_u16_be(const unsigned char *bytes)
 int main(int argc, char **argv)
 {
 	const char *device = "/dev/ttyACM0";
-	long baud = 115200;
+	const long baud = IRDROID_BAUD;
 	unsigned long sample_count = 1;
 	int option;
 	int serial_fd;
@@ -135,23 +126,11 @@ int main(int argc, char **argv)
 	double mean_frequency_hz = 0.0;
 	int output_failed;
 
-	while ((option = getopt(argc, argv, "d:b:n:h")) != -1) {
+	while ((option = getopt(argc, argv, "d:n:h")) != -1) {
 		switch (option) {
 		case 'd':
 			device = optarg;
 			break;
-		case 'b': {
-			char *end = NULL;
-			errno = 0;
-			baud = strtol(optarg, &end, 10);
-			if (errno != 0 || end == optarg || *end != '\0' ||
-				baud_constant(baud) == (speed_t)0) {
-				fprintf(stderr, "Unsupported baud rate: %s\n", optarg);
-				print_usage(argv[0]);
-				return EXIT_FAILURE;
-			}
-			break;
-		}
 		case 'n': {
 			char *end = NULL;
 			errno = 0;
@@ -264,8 +243,11 @@ int main(int argc, char **argv)
 		a = read_u16_be(&measurement_response[0]);
 		b = read_u16_be(&measurement_response[2]);
 		c = read_u16_be(&measurement_response[4]);
+
 		if (!(a < b && b < c)) {
-			fprintf(stderr, "Invalid sample %lu: expected A < B < C (A=%u, B=%u, C=%u).\n",
+			fprintf(stderr,
+				"Invalid sample %lu: expected A < B < C (A=%u, B=%u, C=%u). "
+				"Move the remote closer to the sensor (2cm) and try again.\n",
 				sample_index + 1, (unsigned)a, (unsigned)b, (unsigned)c);
 			if (write_all(serial_fd, exit_sampling_command, sizeof(exit_sampling_command)) < 0)
 				perror("sending sampling-mode exit command");
@@ -275,7 +257,10 @@ int main(int argc, char **argv)
 
 		delta_ab = (uint16_t)(b - a);
 		delta_bc = (uint16_t)(c - b);
-		frequency_hz = 12000000.0 / (((double)delta_ab + (double)delta_bc) / 2.0);
+
+		frequency_hz = IRDROID_TIMER_EXT_CLK_HZ /
+			(((double)delta_ab + (double)delta_bc) / 2.0);
+
 		mean_frequency_hz += (frequency_hz - mean_frequency_hz) /
 			(double)(sample_index + 1);
 
