@@ -15,3 +15,5 @@ The Irdroid USB Infrared Transceiver can measure IR carrier frequency by using t
 ### Other Software that can be used to measure and analyze ir carrier frequency:
 
 - IR Scrutinizer (Can be used to capture , decode and measure IR Carrier frequency)
+
+### You can purchase a unit from [HERE](https://irdroid.eu/product/usb-infrared-transceiver/) (Make sure to choose the IR Carrier measurement capability)
