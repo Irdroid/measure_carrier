@@ -2,7 +2,7 @@ CC ?= cc
 CFLAGS ?= -O2
 CFLAGS += -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow
 
-TARGET := irdroid-serial
+TARGET := irdroid-freq
 SOURCES := main.c
 
 .PHONY: all run clean

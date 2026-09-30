@@ -1,9 +1,17 @@
-# Measure IR Carrier frequency with the Irdroid USB Infrared Transceiver
+## Measure IR Carrier frequency with the Irdroid USB Infrared Transceiver
 
-## Usage:
+The Irdroid USB Infrared Transceiver can measure IR carrier frequency by using the optional ir detector - National Semi QSE159. The standard version of the adapter does not come equipped with QSE159 and the passive components.
 
-- compile the program in Linux with make
-- use the shell script to enumerate the device as a ttyACM0 serial device
-- insert the USB Infrared Transceiver
-- quickly hit a remote button once from a distance of up to 5cm
-- the carrier in HZ will be printed out in the console
+### Usage:
+
+- Compile the program in Linux with make (requires installation of build essentials )
+- Use the shell script to enumerate the device as a ttyACM0 serial device
+    -    The Linux kernel will enumerate the device as /dev/lirc0 due to thre built in support for the adapter. Therefore to get access to the device from userspace, use the script in this repo to enumerate the adapter as a serial device.   
+- Insert the USB Infrared Transceiver (make sure it is enumerated as a serial device e.g /dev/ttyACM*)
+- Start the program ./irdroid_freq
+- Quickly hit a remote button ONCE from a distance of up to 5cm
+- The carrier frequency in HZ will be printed out in the console
+
+### Other Software that can be used to measure and analyze ir carrier frequency:
+
+- IR Scrutinizer (Can be used to capture , decode and measure IR Carrier frequency)
