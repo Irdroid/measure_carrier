@@ -1,6 +1,6 @@
 ## Measure IR Carrier frequency with the Irdroid USB Infrared Transceiver
 
-![Dump](https://irdroid.com/wp-content/uploads/2026/10/Screenshot-from-2026-10-01-09-42-09.png)
+![Dump](https://irdroid.com/wp-content/uploads/2026/10/Screenshot-from-2026-10-01-09-42-09.png =500x)
 
 The Irdroid USB Infrared Transceiver can measure IR carrier frequency by using the optional ir detector - National Semi QSE159. The standard version of the adapter does not come equipped with QSE159 and the passive components.
 
